@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    stream:
+      kafka:
+        bindings:
+          auditConsumer-in-0:
+            consumer:
+              enable-dlq: false
+      bindings:
+        auditConsumer-in-0:
+          consumer:
+            max-attempts: 3
+        global-dlq-out-0:
+            destination: global-dlq-topic
+            producer:
+              partition-count: 1
