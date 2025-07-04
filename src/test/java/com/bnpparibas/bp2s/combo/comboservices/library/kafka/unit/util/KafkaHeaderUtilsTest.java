@@ -1,8 +1,9 @@
-package com.bnpparibas.bp2s.combo.comboservices.library.kafka.util;
+package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeaderKeys;
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaHeaderUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
