@@ -6,6 +6,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.core.KafkaGenericPu
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorHandler;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorMapper;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.KafkaPublishableMessage;
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaDlqMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
 import java.time.OffsetDateTime;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,8 +33,8 @@ public class KafkaCoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public KafkaErrorMapper<KafkaPublishableMessage> defaultKafkaErrorMapper() {
-        return (message, exception) -> KafkaPublishableMessage.builder()
-                .originalMessage(message.getPayload().toString())
+        return (message, exception) -> DefaultKafkaDlqMessage.builder()
+                .message(message.getPayload().toString())
                 .headers(message.getHeaders())
                 .messageType((String) KafkaErrorMetadataContext.get(KafkaHeaderKeys.MESSAGE_TYPE.getKey()).orElse("UNKNOWN"))
                 .status((String) KafkaErrorMetadataContext.get(KafkaHeaderKeys.STATUS.getKey()).orElse("FAILED"))

@@ -47,6 +47,6 @@ public final class KafkaHeaderUtils {
 
     public static Optional<Long> getHeaderAsLong(MessageHeaders headers, String key) {
         Object value = headers.get(key);
-        return value != null ? Optional.of(Long.getLong(value.toString())) : Optional.empty();
+        return value != null ? Optional.of(Long.parseLong(value.toString())) : Optional.empty();
     }
 }
