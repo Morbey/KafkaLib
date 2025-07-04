@@ -3,7 +3,7 @@ openapi: 3.0.1
 x-stoplight:
   id: 123456789
 info:
-  title: Connetor service
+  title: Connector service
   description: This API provides all operations with messages
   version: 1.0.0
   contact:
@@ -13,7 +13,7 @@ servers:
     description: Generated server url
 tags:
   - name: genericDlq
-    description: messages realted with generic dlq
+    description: messages related with generic dlq
 components:
   securitySchemes:
     bearerAuth:
