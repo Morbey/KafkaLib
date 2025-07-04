@@ -1,4 +1,4 @@
-package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.integration.stepdefs;
+package com.bnpparibas.bp2s.combo.comboservices.library.kafka.integration.stepdefs;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -19,10 +19,12 @@ import io.cucumber.java.en.When;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.jetbrains.annotations.NotNull;
 import org.mockito.ArgumentCaptor;
+import org.springframework.cloud.stream.binder.ConsumerProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
-import org.springframework.cloud.stream.config.ConsumerProperties;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
@@ -37,21 +39,10 @@ public class KafkaErrorHandlerSteps {
     public void messageWithRetry(int retry, int maxAttempts) {
         publisher = mock(KafkaGenericPublisher.class);
 
-        BindingServiceProperties props = new BindingServiceProperties();
-        Map<String, BindingProperties> bindings = new HashMap<>();
-        BindingProperties bp = new BindingProperties();
-        bp.setDestination("audit-topic");
-        ConsumerProperties cp = new ConsumerProperties();
-        cp.setMaxAttempts(maxAttempts);
-        bp.setConsumer(cp);
-        bindings.put("audit-in", bp);
-        props.setBindings(bindings);
-
-        KafkaRetryHeaderUtils utils = new KafkaRetryHeaderUtils(props);
+        KafkaRetryHeaderUtils utils = getKafkaRetryHeaderUtils(maxAttempts);
         KafkaErrorMapper<GenericKafkaMessage> mapper = (msg, ex) -> DefaultKafkaDlqMessage.builder()
                 .messageType("audit")
                 .status("exceeded retry")
-                .originalMessage(msg.getPayload().getOriginalMessage())
                 .topicName(msg.getPayload().getTopicName())
                 .payload(msg.getPayload().getPayload())
                 .headers(msg.getHeaders())
@@ -70,6 +61,22 @@ public class KafkaErrorHandlerSteps {
                 .setHeader(KafkaHeaderKeys.RETRY_ATTEMPT_HEADER.getKey(), retry)
                 .setHeader("kafka_receivedTopic", "audit-topic")
                 .build();
+    }
+
+    @NotNull
+    private static KafkaRetryHeaderUtils getKafkaRetryHeaderUtils(int maxAttempts) {
+        BindingServiceProperties props = new BindingServiceProperties();
+        Map<String, BindingProperties> bindings = new HashMap<>();
+        BindingProperties bp = new BindingProperties();
+        bp.setDestination("audit-topic");
+        ConsumerProperties cp = new ConsumerProperties();
+        cp.setMaxAttempts(maxAttempts);
+        bp.setConsumer(cp);
+        bindings.put("audit-in", bp);
+        props.setBindings(bindings);
+
+        KafkaRetryHeaderUtils utils = new KafkaRetryHeaderUtils(props);
+        return utils;
     }
 
     @When("the error handler processes the message")

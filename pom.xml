@@ -196,7 +196,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <testSourceDirectory>${project.basedir}/src/test/integration/java</testSourceDirectory>
+                    <testSourceDirectory>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/integration/java</testSourceDirectory>
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
@@ -210,7 +210,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <testSourceDirectory>${project.basedir}/src/test/integration/java</testSourceDirectory>
+                    <testSourceDirectory>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/integration/java</testSourceDirectory>
                     <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
                     <includes>
                         <include>**/*IT.java</include>
