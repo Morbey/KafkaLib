@@ -2,36 +2,28 @@
 openapi: 3.0.1
 components:
   schemas:
-    KafkaPublishableMessage:
-      type: object
-      properties:
-        topicName:
-          type: string
-      required:
-        - topicName
-
     task:
-      allOf:
-        - $ref: '#/components/schemas/KafkaPublishableMessage'
-        - type: object
-          properties:
-            message:
-              type: object
-            headers:
-              type: object
-            payload:
-              type: object
-            status:
-              type: string
-            createdAt:
-              type: string
-              format: date-time
-              readOnly: true
-            errorMsg:
-              type: string
-            objectMsgId:
-              type: integer
-              format: int64
+      type: object
+      x-implements:
+        - ../genericKafka.yaml
+      properties:
+        message:
+          type: object
+        headers:
+          type: object
+        payload:
+          type: object
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        errorMsg:
+          type: string
+        objectMsgId:
+          type: integer
+          format: int64
       required:
         - message
         - headers
