@@ -10,8 +10,6 @@ components:
     genericKafkaMessage:
       type: object
       properties:
-        globalDlq:
-          type: string
         topicName:
           type: string
         message:
@@ -31,13 +29,12 @@ components:
         objectMsgId:
           type: integer
           format: int64
-        children:
-          items:
-            $ref: "#/components/schemas/genericKafkaMessage"
       discriminator:
         propertyName: globalDlq
         mapping:
           globalDlq: "#/components/schemas/globalDlqMessage"
+          ipeAudit: "#/components/schemas/ipeAudit"
+          task: "#/components/schemas/task"
     globalDlqMessage:
       allOf:
         - $ref: '#/components/schemas/genericKafkaMessage'
@@ -45,4 +42,10 @@ components:
       properties:
         errorMsg:
           type: string
-      x-discriminator-value: '#/components/schemas/genericKafkaMessage'
+    ipeAudit:
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
+        - $ref: './ipeAudit.yaml'
+    task:
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'

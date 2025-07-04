@@ -1,0 +1,21 @@
+---
+type: object
+allOf:
+  - $ref: "./audit.yaml"
+  - type: object
+    properties:
+      sentDate:
+        type: string
+      caseTemplateId:
+        type: integer
+        format: int64
+      activityId:
+        type: integer
+        format: int64
+      activityTemplateId:
+        type: integer
+        format: int64
+      group:
+        type: string
+      opTimestamp:
+        type: string
