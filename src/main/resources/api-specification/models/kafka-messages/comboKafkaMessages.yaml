@@ -23,50 +23,56 @@ components:
           type: integer
           format: int64
     globalDlq:
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
+        - type: object
+          properties:
+            errorMsg:
+              type: string
       x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
-      properties:
-        errorMsg:
-          type: string
     ipeAudit:
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
+        - type: object
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+            eventId:
+              type: string
+            author:
+              type: string
+            objectType:
+              type: string
+            objectId:
+              type: integer
+              format: int64
+            objectName:
+              type: string
+            objectState:
+              type: string
+            objectPoGroup:
+              type: string
+            parentObjectId:
+              type: integer
+              format: int64
+            parentObjectType:
+              type: string
+            parentObjectName:
+              type: string
+            eventData:
+              type: string
+            auditType:
+              type: string
+            caseId:
+              type: integer
+              format: int64
       x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        eventId:
-          type: string
-        author:
-          type: string
-        objectType:
-          type: string
-        objectId:
-          type: integer
-          format: int64
-        objectName:
-          type: string
-        objectState:
-          type: string
-        objectPoGroup:
-          type: string
-        parentObjectId:
-          type: integer
-          format: int64
-        parentObjectType:
-          type: string
-        parentObjectName:
-          type: string
-        eventData:
-          type: string
-        auditType:
-          type: string
-        caseId:
-          type: integer
-          format: int64
     task:
-      type: object
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
+        - type: object
+          properties:
+            errorMsg:
+              type: string
       x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
-      properties:
-        errorMsg:
-          type: string
