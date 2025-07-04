@@ -32,7 +32,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './models/kafka-messages/task.yaml'
+              $ref: './models/kafka-messages/task.yaml#/components/schemas/task'
         required: true
       responses:
         '200':
@@ -46,7 +46,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './models/kafka-messages/ipeAudit.yaml'
+              $ref: './models/kafka-messages/ipeAudit.yaml#/components/schemas/ipeAudit'
         required: true
       responses:
         '200':
@@ -60,7 +60,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './models/kafka-messages/global-dlq.yaml'
+              $ref: './models/kafka-messages/global-dlq.yaml#/components/schemas/globalDlq'
         required: true
       responses:
         '200':

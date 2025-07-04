@@ -12,7 +12,7 @@ class KafkaHeaderUtilsTest {
 
     @Test
     void getObjectMsgIdReturnsValueWhenHeaderPresent() {
-        Message<String> message = MessageBuilder.withPayload("payload")
+        Message<GlobalDlqMessage> message = MessageBuilder.withPayload("payload")
                 .setHeader(KafkaHeaderKeys.MESSAGE_ID.getKey(), "123")
                 .build();
 

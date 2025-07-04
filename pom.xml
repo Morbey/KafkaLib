@@ -238,7 +238,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/api-specification/kafka-spec.yaml</inputSpec>
-                            <generatorName>java</generatorName>
+                            <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <modelPackage>com.bnpparibas.bp2s.combo.comboservices.library.kafka.model</modelPackage>
