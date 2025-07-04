@@ -27,8 +27,11 @@ public class MyErrorMapper implements KafkaErrorMapper<MyDlqMessage> {
 3. Provide it to the error handler:
 ```java
 @Bean
-public KafkaErrorHandler<MyDlqMessage> errorHandler(KafkaGenericPublisher<MyDlqMessage> publisher) {
-    return new KafkaErrorHandler<>(publisher, errorProps, new MyErrorMapper());
+public KafkaErrorHandler<MyDlqMessage> errorHandler(
+        KafkaGenericPublisher<MyDlqMessage> publisher,
+        BindingServiceProperties bindingProps) {
+    KafkaRetryHeaderUtils retryUtils = new KafkaRetryHeaderUtils(bindingProps);
+    return new KafkaErrorHandler<>(publisher, new MyErrorMapper(), retryUtils);
 }
 ```
 
