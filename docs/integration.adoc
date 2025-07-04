@@ -1,0 +1,75 @@
+
+= Kafka Integration Guide
+:toc: left
+:sectnums:
+:source-highlighter: coderay
+
+== Introduction
+
+This document explains how to integrate the `kafka-core-library` into your service. It covers consumer setup, retry strategy, DLQ handling, and how to plug in custom error mapping logic.
+
+== How to Use the Library
+
+To start using this library in your project:
+
+1. Add the dependency to your `pom.xml`:
++
+```xml
+<dependency>
+  <groupId>com.bnpparibas.bp2s.combo.comboservices.library</groupId>
+  <artifactId>kafka-core-library</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```
+
+2. Create a `KafkaErrorHandler<T>` bean in your application, providing:
+   - A `KafkaGenericPublisher<T>` bean;
+   - A `KafkaConsumerErrorProperties` bean (or use default configuration);
+   - A custom implementation of `KafkaErrorMapper<T>` to map failed messages to DLQ format.
+
+== Custom Error Mapping
+
+The library is **message-model agnostic**. You must provide an implementation of the interface:
+
+```java
+@FunctionalInterface
+public interface KafkaErrorMapper<T> {
+    T buildErrorMessage(Message<?> originalMessage, Exception exception);
+}
+```
+
+This allows you to decide how your original message and exception are transformed into a DLQ or retry message. For example:
+
+```java
+public class MyErrorMapper implements KafkaErrorMapper<MyDlqMessage> {
+    @Override
+    public MyDlqMessage buildErrorMessage(Message<?> originalMessage, Exception exception) {
+        return new MyDlqMessage(
+            originalMessage.getPayload().toString(),
+            exception.getMessage(),
+            Instant.now()
+        );
+    }
+}
+```
+
+Then inject it:
+
+```java
+@Bean
+public KafkaErrorHandler<MyDlqMessage> errorHandler(KafkaGenericPublisher<MyDlqMessage> publisher) {
+    return new KafkaErrorHandler<>(publisher, errorProps, new MyErrorMapper());
+}
+```
+
+== Key Benefits
+
+- You can plug in **any message model** you want.
+- Error handling is completely **customizable per project**.
+- Library remains **fully reusable and clean** with no tight coupling.
+
+== Summary
+
+- The library **does not dictate** your DLQ message structure.
+- You **must implement** `KafkaErrorMapper<T>` and inject it.
+- This gives you total control and flexibility across projects.

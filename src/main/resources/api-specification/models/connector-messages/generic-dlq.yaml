@@ -1,0 +1,25 @@
+---
+type: object
+properties:
+  messageType:
+    type: string
+  topicName:
+    type: string
+  originalMessage:
+    type: object
+  headers:
+    type: object
+  payload:
+    type: object
+  status:
+    type: string
+  createdAt:
+    type: string
+    format: date-time
+    readOnly: true
+  errorMsg:
+    type: string
+  objectMsgId:
+    type: integer
+    format: int64
+

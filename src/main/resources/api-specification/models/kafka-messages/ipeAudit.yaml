@@ -1,0 +1,57 @@
+---
+openapi: 3.0.1
+components:
+  schemas:
+    KafkaPublishableMessage:
+      type: object
+      properties:
+        topicName:
+          type: string
+      required:
+        - topicName
+
+    ipeAudit:
+      allOf:
+        - $ref: '#/components/schemas/KafkaPublishableMessage'
+
+        - type: object
+          properties:
+            timestamp:
+              type: string
+              format: date-time
+            eventId:
+              type: string
+            author:
+              type: string
+            objectType:
+              type: string
+            objectId:
+              type: integer
+              format: int64
+            objectName:
+              type: string
+            objectState:
+              type: string
+            objectPoGroup:
+              type: string
+            parentObjectId:
+              type: integer
+              format: int64
+            parentObjectType:
+              type: string
+            parentObjectName:
+              type: string
+            eventData:
+              type: string
+            auditType:
+              type: string
+            caseId:
+              type: integer
+              format: int64
+          required:
+            - timestamp
+            - eventId
+            - author
+            - objectType
+            - objectId
+            - objectName
