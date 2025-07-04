@@ -274,7 +274,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/api-specification/models/kafka-messages/comboKafkaMessages.yaml</inputSpec>
-                            <generatorName>java</generatorName>
+                            <generatorName>spring</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <modelPackage>com.bnpparibas.bp2s.combo.comboservices.library.kafka.model</modelPackage>
                             <configOptions>
@@ -282,17 +282,14 @@
                                 <useTags>true</useTags>
                                 <useBeanValidation>true</useBeanValidation>
                                 <useJakartaEe>true</useJakartaEe>
-                                <additionalModelTypeAnnotations>@lombok.experimental.SuperBuilder
-                                    @lombok.AllArgsConstructor
-                                    @lombok.Data
-                                </additionalModelTypeAnnotations>
+                                <additionalModelTypeAnnotations>@lombok.experimental.SuperBuilder</additionalModelTypeAnnotations>
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                                 <serializableModel>true</serializableModel>
                                 <generateModelTests>false</generateModelTests>
                             </configOptions>
                             <generateApis>false</generateApis>
                             <generateModels>true</generateModels>
-                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <generateSupportingFiles>false</generateSupportingFiles>
                             <additionalProperties>
                                 <modelInheritance>true</modelInheritance>
                             </additionalProperties>

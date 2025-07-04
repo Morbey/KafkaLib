@@ -37,13 +37,12 @@ components:
       discriminator:
         propertyName: globalDlq
         mapping:
-          foo: "#/components/schemas/globalDlqMessage"
+          globalDlq: "#/components/schemas/globalDlqMessage"
     globalDlqMessage:
       allOf:
         - $ref: '#/components/schemas/genericKafkaMessage'
       type: object
       properties:
         errorMsg:
-          items:
-            $ref: '#/components/schemas/genericKafkaMessage'
           type: string
+      x-discriminator-value: '#/components/schemas/genericKafkaMessage'
