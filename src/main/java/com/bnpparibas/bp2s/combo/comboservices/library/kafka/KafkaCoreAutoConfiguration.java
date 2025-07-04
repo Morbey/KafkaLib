@@ -5,15 +5,17 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.context.KafkaErrorM
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.core.KafkaGenericPublisher;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorHandler;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorMapper;
-import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.KafkaPublishableMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaDlqMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
+
 import java.time.OffsetDateTime;
+
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 
 //@formatter:off
 /**
@@ -23,16 +25,16 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnMissingBean(BindingServiceProperties.class)
 public class KafkaCoreAutoConfiguration {
 
-    public final static String GLOBAL_DLQ_OUT = "global-dlq-out-0";
+    public static final String GLOBAL_DLQ_OUT = "global-dlq-out-0";
 
     @Bean
-    public KafkaGenericPublisher kafkaGenericPublisher(StreamBridge streamBridge) {
-        return new KafkaGenericPublisher(streamBridge);
+    public KafkaGenericPublisher<GenericKafkaMessage> kafkaGenericPublisher(StreamBridge streamBridge) {
+        return new KafkaGenericPublisher<>(streamBridge);
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public KafkaErrorMapper<KafkaPublishableMessage> defaultKafkaErrorMapper() {
+    public KafkaErrorMapper<GenericKafkaMessage> defaultKafkaErrorMapper() {
         return (message, exception) -> DefaultKafkaDlqMessage.builder()
                 .message(message.getPayload().toString())
                 .headers(message.getHeaders())
@@ -49,9 +51,8 @@ public class KafkaCoreAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
-    public KafkaErrorHandler kafkaErrorHandler(KafkaGenericPublisher publisher, KafkaErrorMapper<KafkaPublishableMessage> errorMapper,
-                                               BindingServiceProperties bindingServiceProperties) {
+    public KafkaErrorHandler kafkaErrorHandler(KafkaGenericPublisher<GenericKafkaMessage> publisher, KafkaErrorMapper<GenericKafkaMessage> errorMapper, BindingServiceProperties bindingServiceProperties) {
         KafkaRetryHeaderUtils retryHeaderUtils = new KafkaRetryHeaderUtils(bindingServiceProperties);
-        return new KafkaErrorHandler(publisher, errorMapper, retryHeaderUtils);
+        return new KafkaErrorHandler<>(publisher, errorMapper, retryHeaderUtils);
     }
 }

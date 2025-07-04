@@ -1,8 +1,10 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.util;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.mock;
 
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeaderKeys;
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaHeaderUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.Message;
@@ -12,7 +14,9 @@ class KafkaHeaderUtilsTest {
 
     @Test
     void getObjectMsgIdReturnsValueWhenHeaderPresent() {
-        Message<GlobalDlqMessage> message = MessageBuilder.withPayload("payload")
+        GenericKafkaMessage genericKafkaMessage = mock(GenericKafkaMessage.class);
+
+        Message<GenericKafkaMessage> message = MessageBuilder.withPayload(genericKafkaMessage)
                 .setHeader(KafkaHeaderKeys.MESSAGE_ID.getKey(), "123")
                 .build();
 

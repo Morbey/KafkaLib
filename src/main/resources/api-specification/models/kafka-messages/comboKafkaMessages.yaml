@@ -1,0 +1,72 @@
+---
+openapi: 3.0.1
+components:
+  schemas:
+    genericKafkaMessage:
+      type: object
+      properties:
+        topicName:
+          type: string
+        message:
+          type: object
+        headers:
+          type: object
+        payload:
+          type: object
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+          readOnly: true
+        objectMsgId:
+          type: integer
+          format: int64
+    globalDlq:
+      type: object
+      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
+      properties:
+        errorMsg:
+          type: string
+    ipeAudit:
+      type: object
+      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        eventId:
+          type: string
+        author:
+          type: string
+        objectType:
+          type: string
+        objectId:
+          type: integer
+          format: int64
+        objectName:
+          type: string
+        objectState:
+          type: string
+        objectPoGroup:
+          type: string
+        parentObjectId:
+          type: integer
+          format: int64
+        parentObjectType:
+          type: string
+        parentObjectName:
+          type: string
+        eventData:
+          type: string
+        auditType:
+          type: string
+        caseId:
+          type: integer
+          format: int64
+    task:
+      type: object
+      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
+      properties:
+        errorMsg:
+          type: string

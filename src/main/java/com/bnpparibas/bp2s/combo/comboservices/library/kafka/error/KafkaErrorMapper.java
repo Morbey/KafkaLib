@@ -5,10 +5,10 @@ import org.springframework.messaging.Message;
 /**
  * Functional interface that defines how to build an error message from a failed Kafka message.
  *
- * @param <GenericDlqMessage> the type of the error message to be sent to the fallback topic (e.g., DLQ)
+ * @param <T> the type of the error message to be sent to the fallback topic (e.g., DLQ)
  */
 @FunctionalInterface
-public interface KafkaErrorMapper<GenericDlqMessage> {
+public interface KafkaErrorMapper<T> {
 
     /**
      * Constructs an error message from the original message and exception.
@@ -17,6 +17,6 @@ public interface KafkaErrorMapper<GenericDlqMessage> {
      * @param exception the exception thrown during processing
      * @return a message object ready to be published to Kafka
      */
-    GenericDlqMessage buildErrorMessage(Message<?> originalMessage, Exception exception);
+    T buildErrorMessage(Message<?> originalMessage, Exception exception);
 
 }

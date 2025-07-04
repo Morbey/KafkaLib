@@ -5,12 +5,9 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Getter;
 
-/**
- * Default implementation of {@link KafkaPublishableMessage} used for error handling.
- */
 @Getter
 @Builder
-public class DefaultKafkaDlqMessage implements KafkaPublishableMessage {
+public class DefaultKafkaDlqMessage implements GenericKafkaMessage {
     private final String topicName;
     private final Object message;
     private final Map<String, Object> headers;

@@ -15,12 +15,14 @@
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <cucumber.version>7.14.0</cucumber.version>
         <lombok.version>1.18.38</lombok.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <mockito-core.version>5.18.0</mockito-core.version>
         <spring.boot.version>3.5.0</spring.boot.version>
         <spring.kafka.version>3.3.7</spring.kafka.version>
         <spring.cloud.version>2022.0.4</spring.cloud.version>
+        <swagger-annotations.version>2.2.31</swagger-annotations.version>
         <openapi.generator.version>6.6.0</openapi.generator.version>
     </properties>
 
@@ -64,6 +66,18 @@
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-stream-kafka</artifactId>
+        </dependency>
+
+        <!-- openapi dependencies -->
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+            <version>${swagger-annotations.version}</version>
         </dependency>
 
         <!-- Lombok -->
@@ -237,22 +251,31 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specification/kafka-spec.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specification/kafka-messages/comboKafkaMessages.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <modelPackage>com.bnpparibas.bp2s.combo.comboservices.library.kafka.model</modelPackage>
                             <configOptions>
-                                <dateLibrary>java8</dateLibrary>
+                                <java8>true</java8>
                                 <interfaceOnly>true</interfaceOnly>
+                                <skipDefaultInterface>true</skipDefaultInterface>
+                                <useTags>true</useTags>
                                 <useBeanValidation>true</useBeanValidation>
+                                <useJakartaEe>true</useJakartaEe>
+                                <additionalModelTypeAnnotations>@lombok.experimental.SuperBuilder
+                                    @lombok.NoArgsConstructor
+                                    @lombok.AllArgsConstructor
+                                    @lombok.Data
+                                </additionalModelTypeAnnotations>
+                                <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                                 <serializableModel>true</serializableModel>
-                                <modelNameSuffix>Message</modelNameSuffix>
                             </configOptions>
                             <skipOverwrite>false</skipOverwrite>
                             <generateApis>false</generateApis>
                             <generateModels>true</generateModels>
                             <generateSupportingFiles>false</generateSupportingFiles>
+                            <modelNameSuffix>Message</modelNameSuffix>
                         </configuration>
                     </execution>
                 </executions>

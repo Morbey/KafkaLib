@@ -60,7 +60,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: './models/kafka-messages/global-dlq.yaml#/components/schemas/globalDlq'
+              $ref: './models/kafka-messages/globalDlq.yaml#/components/schemas/globalDlq'
         required: true
       responses:
         '200':

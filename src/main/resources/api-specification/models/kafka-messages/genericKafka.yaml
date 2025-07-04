@@ -2,11 +2,11 @@
 openapi: 3.0.1
 components:
   schemas:
-    globalDlq:
+    genericKafkaMessage:
       type: object
-      x-implements:
-        - ../genericKafka.yaml
       properties:
+        topicName:
+          type: string
         message:
           type: object
         headers:
@@ -19,22 +19,6 @@ components:
           type: string
           format: date-time
           readOnly: true
-        errorMsg:
-          type: string
         objectMsgId:
           type: integer
           format: int64
-      required:
-        - message
-        - headers
-        - payload
-        - status
-        - createdAt
-        - errorMsg
-        - objectMsgId
-
-info:
-  title: DLQ API
-  version: 1.0.0
-  description: DLQ API
-
