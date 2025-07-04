@@ -242,7 +242,7 @@
 							<goal>generate</goal>
 						</goals>
 						<configuration>
-							<inputSpec>${project.basedir}/src/main/resources/api-specification/models/kafka-messages/global-dlq.yaml</inputSpec>
+                                                        <inputSpec>${project.basedir}/src/main/resources/api-specification/kafka-spec.yaml</inputSpec>
 							<generatorName>java</generatorName>
 							<library>spring-boot</library>
 							<output>${project.build.directory}/generated-sources/openapi</output>
@@ -252,7 +252,7 @@
 								<interfaceOnly>true</interfaceOnly>
 								<useBeanValidation>true</useBeanValidation>
 								<serializableModel>true</serializableModel>
-								<modelNameSuffix></modelNameSuffix>
+                                                                <modelNameSuffix>Message</modelNameSuffix>
 							</configOptions>
 							<skipOverwrite>false</skipOverwrite>
 							<generateApis>false</generateApis>
