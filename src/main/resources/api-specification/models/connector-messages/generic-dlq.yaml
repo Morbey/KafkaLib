@@ -1,7 +1,5 @@
 ---
 type: object
-x-implements:
-  - ../genericKafka.yaml
 properties:
   messageType:
     type: string

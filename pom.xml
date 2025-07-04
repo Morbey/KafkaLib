@@ -251,7 +251,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>${project.basedir}/src/main/resources/api-specification/kafka-messages/comboKafkaMessages.yaml</inputSpec>
+                            <inputSpec>${project.basedir}/src/main/resources/api-specification/models/kafka-messages/comboKafkaMessages.yaml</inputSpec>
                             <generatorName>spring</generatorName>
                             <library>spring-boot</library>
                             <output>${project.build.directory}/generated-sources/openapi</output>

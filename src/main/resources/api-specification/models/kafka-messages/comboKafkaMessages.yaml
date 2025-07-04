@@ -1,5 +1,10 @@
 ---
 openapi: 3.0.1
+info:
+  title: Kafka Messages API
+  description: API for managing Kafka messages
+  version: 1.0.0
+paths: {}
 components:
   schemas:
     genericKafkaMessage:
@@ -13,6 +18,8 @@ components:
           type: object
         payload:
           type: object
+        messageType:
+          type: string
         status:
           type: string
         createdAt:
@@ -23,14 +30,15 @@ components:
           type: integer
           format: int64
     globalDlq:
-      type: object
-      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
       properties:
         errorMsg:
           type: string
-    ipeAudit:
-      type: object
       x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
+    ipeAudit:
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
       properties:
         timestamp:
           type: string
@@ -64,9 +72,8 @@ components:
         caseId:
           type: integer
           format: int64
-    task:
-      type: object
       x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
-      properties:
-        errorMsg:
-          type: string
+    task:
+      allOf:
+        - $ref: '#/components/schemas/genericKafkaMessage'
+      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
