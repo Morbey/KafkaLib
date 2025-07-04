@@ -1,13 +1,9 @@
 ---
 type: object
-x-implements:
-  - ../genericKafka.yaml
 properties:
-  messageType:
-    type: string
   topicName:
-    type: string
-  originalMessage:
+    type: object
+  message:
     type: object
   headers:
     type: object
@@ -19,9 +15,6 @@ properties:
     type: string
     format: date-time
     readOnly: true
-  errorMsg:
-    type: string
   objectMsgId:
     type: integer
     format: int64
-
