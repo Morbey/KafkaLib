@@ -6,6 +6,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.core.KafkaGenericPu
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorHandler;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorMapper;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaDlqMessage;
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
 
 import java.time.OffsetDateTime;
@@ -15,7 +16,6 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 
 //@formatter:off
 /**
@@ -46,12 +46,11 @@ public class KafkaCoreAutoConfiguration {
                 .errorMsg(exception.getMessage())
                 .createdAt(OffsetDateTime.now())
                 .build();
-
     }
 
     @Bean
     @ConditionalOnMissingBean
-    public KafkaErrorHandler kafkaErrorHandler(KafkaGenericPublisher<GenericKafkaMessage> publisher, KafkaErrorMapper<GenericKafkaMessage> errorMapper, BindingServiceProperties bindingServiceProperties) {
+    public KafkaErrorHandler<GenericKafkaMessage> kafkaErrorHandler(KafkaGenericPublisher<GenericKafkaMessage> publisher, KafkaErrorMapper<GenericKafkaMessage> errorMapper, BindingServiceProperties bindingServiceProperties) {
         KafkaRetryHeaderUtils retryHeaderUtils = new KafkaRetryHeaderUtils(bindingServiceProperties);
         return new KafkaErrorHandler<>(publisher, errorMapper, retryHeaderUtils);
     }

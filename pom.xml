@@ -14,16 +14,19 @@
         <assertj-core.version>3.27.3</assertj-core.version>
         <build-helper-maven-plugin.version>3.6.1</build-helper-maven-plugin.version>
         <cucumber.version>7.14.0</cucumber.version>
+        <gson.version>2.13.1</gson.version>
+        <gson-fire.version>1.9.0</gson-fire.version>
         <lombok.version>1.18.38</lombok.version>
         <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
         <mockito-core.version>5.18.0</mockito-core.version>
+        <okhttp.version>4.12.0</okhttp.version>
         <spring.boot.version>3.5.0</spring.boot.version>
         <spring.kafka.version>3.3.7</spring.kafka.version>
         <spring.cloud.version>2022.0.4</spring.cloud.version>
         <swagger-annotations.version>2.2.31</swagger-annotations.version>
-        <openapi.generator.version>6.6.0</openapi.generator.version>
+        <openapi.generator.version>7.6.0</openapi.generator.version>
     </properties>
 
     <dependencyManagement>
@@ -79,6 +82,21 @@
             <artifactId>swagger-annotations</artifactId>
             <version>${swagger-annotations.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+            <version>${okhttp.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.gsonfire</groupId>
+            <artifactId>gson-fire</artifactId>
+            <version>${gson-fire.version}</version>
+        </dependency>
 
         <!-- Lombok -->
         <dependency>
@@ -88,11 +106,16 @@
             <scope>provided</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>${gson.version}</version>
+        </dependency>
+
         <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <scope>test</scope>
         </dependency>
 
         <!-- Mockito -->
@@ -106,7 +129,6 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>${mockito-core.version}</version>
-            <scope>test</scope>
         </dependency>
 
         <!-- AssertJ for fluent assertions -->
@@ -252,30 +274,28 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/src/main/resources/api-specification/models/kafka-messages/comboKafkaMessages.yaml</inputSpec>
-                            <generatorName>spring</generatorName>
-                            <library>spring-boot</library>
+                            <generatorName>java</generatorName>
                             <output>${project.build.directory}/generated-sources/openapi</output>
                             <modelPackage>com.bnpparibas.bp2s.combo.comboservices.library.kafka.model</modelPackage>
                             <configOptions>
                                 <java8>true</java8>
-                                <interfaceOnly>true</interfaceOnly>
-                                <skipDefaultInterface>true</skipDefaultInterface>
                                 <useTags>true</useTags>
                                 <useBeanValidation>true</useBeanValidation>
                                 <useJakartaEe>true</useJakartaEe>
                                 <additionalModelTypeAnnotations>@lombok.experimental.SuperBuilder
-                                    @lombok.NoArgsConstructor
                                     @lombok.AllArgsConstructor
                                     @lombok.Data
                                 </additionalModelTypeAnnotations>
                                 <generatedConstructorWithRequiredArgs>false</generatedConstructorWithRequiredArgs>
                                 <serializableModel>true</serializableModel>
+                                <generateModelTests>false</generateModelTests>
                             </configOptions>
-                            <skipOverwrite>false</skipOverwrite>
                             <generateApis>false</generateApis>
                             <generateModels>true</generateModels>
-                            <generateSupportingFiles>false</generateSupportingFiles>
-                            <modelNameSuffix>Message</modelNameSuffix>
+                            <generateSupportingFiles>true</generateSupportingFiles>
+                            <additionalProperties>
+                                <modelInheritance>true</modelInheritance>
+                            </additionalProperties>
                         </configuration>
                     </execution>
                 </executions>

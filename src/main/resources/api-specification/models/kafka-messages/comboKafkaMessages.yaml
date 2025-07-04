@@ -10,12 +10,15 @@ components:
     genericKafkaMessage:
       type: object
       properties:
+        globalDlq:
+          type: string
         topicName:
           type: string
         message:
           type: object
         headers:
           type: object
+          additionalProperties: true
         payload:
           type: object
         messageType:
@@ -25,55 +28,22 @@ components:
         createdAt:
           type: string
           format: date-time
-          readOnly: true
         objectMsgId:
           type: integer
           format: int64
-    globalDlq:
+        children:
+          items:
+            $ref: "#/components/schemas/genericKafkaMessage"
+      discriminator:
+        propertyName: globalDlq
+        mapping:
+          foo: "#/components/schemas/globalDlqMessage"
+    globalDlqMessage:
       allOf:
         - $ref: '#/components/schemas/genericKafkaMessage'
+      type: object
       properties:
         errorMsg:
+          items:
+            $ref: '#/components/schemas/genericKafkaMessage'
           type: string
-      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
-    ipeAudit:
-      allOf:
-        - $ref: '#/components/schemas/genericKafkaMessage'
-      properties:
-        timestamp:
-          type: string
-          format: date-time
-        eventId:
-          type: string
-        author:
-          type: string
-        objectType:
-          type: string
-        objectId:
-          type: integer
-          format: int64
-        objectName:
-          type: string
-        objectState:
-          type: string
-        objectPoGroup:
-          type: string
-        parentObjectId:
-          type: integer
-          format: int64
-        parentObjectType:
-          type: string
-        parentObjectName:
-          type: string
-        eventData:
-          type: string
-        auditType:
-          type: string
-        caseId:
-          type: integer
-          format: int64
-      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
-    task:
-      allOf:
-        - $ref: '#/components/schemas/genericKafkaMessage'
-      x-implements: ['com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage']
