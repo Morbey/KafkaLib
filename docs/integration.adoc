@@ -14,13 +14,14 @@ To start using this library in your project:
 
 1. Add the dependency to your `pom.xml`:
 +
-```xml
+[source,xml]
+----
 <dependency>
   <groupId>com.bnpparibas.bp2s.combo.comboservices.library</groupId>
   <artifactId>kafka-core-library</artifactId>
   <version>1.0.0</version>
 </dependency>
-```
+----
 
 2. Create a `KafkaErrorHandler<T>` bean in your application, providing:
    - A `KafkaGenericPublisher<T>` bean;
@@ -31,16 +32,18 @@ To start using this library in your project:
 
 The library is **message-model agnostic**. You must provide an implementation of the interface:
 
-```java
+[source,java]
+----
 @FunctionalInterface
 public interface KafkaErrorMapper<T> {
     T buildErrorMessage(Message<?> originalMessage, Exception exception);
 }
-```
+----
 
 This allows you to decide how your original message and exception are transformed into a DLQ or retry message. For example:
 
-```java
+[source,java]
+----
 public class MyErrorMapper implements KafkaErrorMapper<MyDlqMessage> {
     @Override
     public MyDlqMessage buildErrorMessage(Message<?> originalMessage, Exception exception) {
@@ -51,16 +54,17 @@ public class MyErrorMapper implements KafkaErrorMapper<MyDlqMessage> {
         );
     }
 }
-```
+----
 
 Then inject it:
 
-```java
+[source,java]
+----
 @Bean
 public KafkaErrorHandler<MyDlqMessage> errorHandler(KafkaGenericPublisher<MyDlqMessage> publisher) {
     return new KafkaErrorHandler<>(publisher, errorProps, new MyErrorMapper());
 }
-```
+----
 
 == Key Benefits
 
@@ -72,9 +76,10 @@ public KafkaErrorHandler<MyDlqMessage> errorHandler(KafkaGenericPublisher<MyDlqM
 
 Disable the binder's DLQ so retries are handled exclusively by this library:
 
-```yaml
+[source,yaml]
+----
 spring.cloud.stream.kafka.bindings.<consumer>.consumer.enable-dlq: false
-```
+----
 
 == Summary
 

@@ -19,7 +19,7 @@ import org.springframework.context.annotation.Configuration;
 
 //@formatter:off
 /**
- * Spring Boot auto-configuration that registers the core Kafka beans used by
+ * Spring Boot autoconfiguration that registers the core Kafka beans used by
  * this library. It exposes a {@link KafkaGenericPublisher} for publishing
  * messages, a default {@link KafkaErrorMapper} that builds a
  * {@link DefaultKafkaDlqMessage}, and a {@link KafkaErrorHandler} preconfigured

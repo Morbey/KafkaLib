@@ -2,22 +2,26 @@ package com.bnpparibas.bp2s.combo.comboservices.library.kafka.util;
 
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.KafkaCoreAutoConfiguration;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeaderKeys;
-import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.messaging.Message;
-import org.springframework.messaging.MessageHeaders;
+
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Manages retry attempts using message headers.
  */
 public class KafkaRetryHeaderUtils {
 
-    /** Default value if no maxAttempts is configured. */
+    /**
+     * Default value if no maxAttempts is configured.
+     */
     private static final int DEFAULT_KAFKA_MAX_ATTEMPTS = 3;
-    /** Binding configuration used to look up retry settings. */
+    /**
+     * Binding configuration used to look up retry settings.
+     */
     private final BindingServiceProperties bindingServiceProperties;
 
     /**
@@ -47,15 +51,14 @@ public class KafkaRetryHeaderUtils {
      * @return attempt number or 0 if header missing
      */
     public int getCurrentAttempt(Message<?> message) {
-        MessageHeaders headers = message.getHeaders();
-        Object header = headers.get(KafkaHeaderKeys.RETRY_ATTEMPT_HEADER.getKey());
-        if (header instanceof Integer)
-            return (Integer) header;
-        if (header instanceof AtomicInteger)
-            return ((AtomicInteger) header).get();
-        if (header instanceof String)
-            return Integer.parseInt((String) header);
-        return 0;
+        return Optional.ofNullable(message.getHeaders().get(KafkaHeaderKeys.RETRY_ATTEMPT_HEADER.getKey()))
+                .map(header -> {
+                    if (header instanceof Integer attempt) return attempt;
+                    if (header instanceof AtomicInteger attempt) return attempt.get();
+                    if (header instanceof String attempt) return Integer.parseInt(attempt);
+                    return 0;
+                })
+                .orElse(0);
     }
 
     /**

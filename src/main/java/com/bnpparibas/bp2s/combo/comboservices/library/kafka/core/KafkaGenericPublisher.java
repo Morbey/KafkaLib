@@ -1,6 +1,5 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.core;
 
-import com.bnpparibas.bp2s.combo.comboservices.library.kafka.context.KafkaErrorMetadataContext;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -10,14 +9,14 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.MimeTypeUtils;
 
-@Slf4j
-@Component
 /**
  * Publishes {@link GenericKafkaMessage} objects to Kafka using Spring Cloud
  * Stream's {@link StreamBridge}.
  *
  * @param <T> type of message being sent
  */
+@Slf4j
+@Component
 public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
 
     /** Spring's bridge used to send messages to Kafka. */

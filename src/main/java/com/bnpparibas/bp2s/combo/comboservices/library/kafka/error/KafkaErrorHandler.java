@@ -39,7 +39,7 @@ public class KafkaErrorHandler<T extends GenericKafkaMessage> {
     /**
      * Processes a failed message. If the retry attempts have not been
      * exhausted, a {@link KafkaProcessingException} is thrown to trigger a
-     * retry. Otherwise the message is converted using the mapper and published
+     * retry. Otherwise, the message is converted using the mapper and published
      * to the configured DLQ.
      *
      * @param message     the original message

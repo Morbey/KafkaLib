@@ -8,19 +8,21 @@ This guide shows how to integrate and configure the library.
 
 Add the Maven dependency:
 
-```xml
+[source,xml]
+----
 <dependency>
   <groupId>com.bnpparibas.bp2s.combo.comboservices.library</groupId>
   <artifactId>kafka-core-library</artifactId>
   <version>1.0.0</version>
 </dependency>
-```
+----
 
 == Configuration
 
 Disable the binder DLQ and configure your consumer:
 
-```yaml
+[source,yaml]
+----
 spring:
   cloud:
     stream:
@@ -33,13 +35,14 @@ spring:
         auditConsumer-in-0:
           consumer:
             max-attempts: 3
-```
+----
 
 == Error Mapper
 
 Implement `KafkaErrorMapper<T>` if you need a custom DLQ payload:
 
-```java
+[source,java]
+----
 @Bean
 public KafkaErrorHandler<MyDlqMessage> errorHandler(
         KafkaGenericPublisher<MyDlqMessage> publisher,
@@ -54,7 +57,7 @@ public KafkaErrorHandler<MyDlqMessage> errorHandler(
                 .build();
     return new KafkaErrorHandler<>(publisher, mapper, utils);
 }
-```
+----
 
 Values placed in `KafkaErrorMetadataContext` via `KafkaHeaderUtils.setHeaderAsObject(...)` are available when building the error message.
 
