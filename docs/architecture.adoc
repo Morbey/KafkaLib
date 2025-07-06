@@ -1,0 +1,46 @@
+= Library Architecture
+:toc: left
+:sectnums:
+
+This document describes the inner workings of the Kafka core library.
+
+== Message Flow
+
+The following UML sequence illustrates how the main components interact when a message fails processing:
+
+[plantuml]
+----
+@startuml
+actor Consumer
+participant "KafkaErrorHandler" as Handler
+participant "KafkaRetryHeaderUtils" as RetryUtil
+participant "KafkaErrorMapper" as Mapper
+participant "KafkaGenericPublisher" as Publisher
+Consumer -> Handler : handleError(msg, ex, dlq)
+Handler -> RetryUtil : incrementAndGetRetryAttempt(msg)
+Handler -> RetryUtil : resolveMaxAttemptsFromMessage(msg)
+alt attempts < max
+    Handler -> Consumer : throw KafkaProcessingException
+else
+    Handler -> Mapper : buildErrorMessage(msg, ex)
+    Handler -> Publisher : publish(errorMsg, dlq)
+end
+@enduml
+----
+
+== Metadata Context Usage
+
+The library stores user provided metadata in a thread local map so it can be retrieved later by the error mapper.
+
+[plantuml]
+----
+@startuml
+actor "User Code"
+participant "KafkaErrorMetadataContext" as Ctx
+"User Code" -> Ctx : put(key,value)
+"User Code" -> Handler : handleError(msg, ex, dlq)
+Handler -> Mapper : buildErrorMessage(msg, ex)
+Mapper -> Ctx : get(key)
+@enduml
+----
+

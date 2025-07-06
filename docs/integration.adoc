@@ -68,6 +68,14 @@ public KafkaErrorHandler<MyDlqMessage> errorHandler(KafkaGenericPublisher<MyDlqM
 - Error handling is completely **customizable per project**.
 - Library remains **fully reusable and clean** with no tight coupling.
 
+== Important Configuration
+
+Disable the binder's DLQ so retries are handled exclusively by this library:
+
+```yaml
+spring.cloud.stream.kafka.bindings.<consumer>.consumer.enable-dlq: false
+```
+
 == Summary
 
 - The library **does not dictate** your DLQ message structure.

@@ -12,14 +12,33 @@ import org.springframework.util.MimeTypeUtils;
 
 @Slf4j
 @Component
+/**
+ * Publishes {@link GenericKafkaMessage} objects to Kafka using Spring Cloud
+ * Stream's {@link StreamBridge}.
+ *
+ * @param <T> type of message being sent
+ */
 public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
 
+    /** Spring's bridge used to send messages to Kafka. */
     private final StreamBridge streamBridge;
 
+    /**
+     * Constructs a new publisher using the provided {@link StreamBridge}.
+     *
+     * @param streamBridge bridge used to send messages
+     */
     public KafkaGenericPublisher(StreamBridge streamBridge) {
         this.streamBridge = streamBridge;
     }
 
+    /**
+     * Publishes the given payload to the specified binding name.
+     * Headers are automatically set with JSON content type.
+     *
+     * @param payload           message to send
+     * @param topicBindingName  output binding configured in Spring Cloud Stream
+     */
     public void publish(T payload, String topicBindingName) {
         Message<T> dlqMessage = MessageBuilder
                 .withPayload(payload)
@@ -29,6 +48,14 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
         streamBridge.send(topicBindingName, dlqMessage);
     }
 
+    /**
+     * Publishes using a raw topic name and optional headers. This method allows
+     * forwarding a message to a specific Kafka topic.
+     *
+     * @param topic   the Kafka topic
+     * @param payload payload to send
+     * @param headers additional headers to attach; may be {@code null}
+     */
     public void publish(String topic, T payload, MessageHeaders headers) {
         MessageBuilder<T> builder = MessageBuilder
                 .withPayload(payload)
