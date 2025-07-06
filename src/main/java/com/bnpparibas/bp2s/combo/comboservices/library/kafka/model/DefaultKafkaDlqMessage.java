@@ -6,6 +6,12 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @SuperBuilder
+/**
+ * Basic DLQ message implementation used by the default error mapper. It extends
+ * {@link GenericKafkaMessage} and adds an {@code errorMsg} field describing the
+ * failure cause.
+ */
 public class DefaultKafkaDlqMessage extends GenericKafkaMessage {
+    /** Description of the processing error. */
     private final String errorMsg;
 }

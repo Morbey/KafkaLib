@@ -35,6 +35,21 @@ public KafkaErrorHandler<MyDlqMessage> errorHandler(
 }
 ```
 
+### Additional Configuration
+
+Disable the binder's built-in DLQ so this library can manage retries:
+
+```yaml
+spring:
+  cloud:
+    stream:
+      kafka:
+        bindings:
+          <your-consumer>:
+            consumer:
+              enable-dlq: false
+```
+
 ## ❗ What NOT to Configure in application.yaml
 
 Avoid the following `spring.cloud.stream` Kafka configurations to prevent conflicts with this library's retry and DLQ mechanisms:
@@ -52,4 +67,5 @@ spring.cloud.stream.kafka.binder.*
 - Lets you customize error handling via pluggable `KafkaErrorMapper<T>`
 - Keeps Kafka concerns modular and reusable
 - Prepares your app for future Kafka extensions
+- Stores custom metadata in a thread local context accessible during error mapping
 
