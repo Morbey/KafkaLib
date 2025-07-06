@@ -1,5 +1,6 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.core;
 
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.context.KafkaErrorMetadataContext;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -19,9 +20,9 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
         this.streamBridge = streamBridge;
     }
 
-    public void publish(T kafkaPublishableMessage, String topicBindingName) {
+    public void publish(T payload, String topicBindingName) {
         Message<T> dlqMessage = MessageBuilder
-                .withPayload(kafkaPublishableMessage)
+                .withPayload(payload)
                 .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
                 .build();
 
@@ -29,6 +30,15 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
     }
 
     public void publish(String topic, T payload, MessageHeaders headers) {
-        publish(payload, topic); // For now, we ignore headers. This can be extended.
+        MessageBuilder<T> builder = MessageBuilder
+                .withPayload(payload)
+                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
+
+        if (headers != null) {
+            headers.forEach(builder::setHeader);
+        }
+
+        Message<T> message = builder.build();
+        streamBridge.send(topic, message);
     }
 }

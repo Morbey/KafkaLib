@@ -12,6 +12,7 @@ class KafkaErrorMetadataContextTest {
         KafkaErrorMetadataContext.put("k1", "v1");
         assertThat(KafkaErrorMetadataContext.get("k1")).contains("v1");
         assertThat(KafkaErrorMetadataContext.getAll()).containsEntry("k1", "v1");
+        assertThat(KafkaErrorMetadataContext.getAll()).size().isEqualTo(1);
 
         KafkaErrorMetadataContext.clear();
         assertThat(KafkaErrorMetadataContext.get("k1")).isEmpty();
