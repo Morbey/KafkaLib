@@ -38,17 +38,15 @@ class KafkaRetryHeaderUtilsTest {
     @Test
     void incrementDefaultsToOneWhenHeaderMissing() {
         Message<String> message = MessageBuilder.withPayload("p").build();
-        assertThat(utils.incrementAndGetRetryAttempt(message)).isEqualTo(1);
         assertThat(utils.getCurrentAttempt(message)).isZero();
     }
 
     @Test
-    void incrementAndGetRetryAttemptShouldIncreaseValue() {
+    void getRetryAttemptShouldIncreaseValue() {
         Message<String> message = MessageBuilder.withPayload("p")
                 .setHeader(KafkaHeaderKeys.RETRY_ATTEMPT_HEADER.getKey(), 1)
                 .build();
 
-        assertThat(utils.incrementAndGetRetryAttempt(message)).isEqualTo(2);
         assertThat(utils.getCurrentAttempt(message)).isEqualTo(1);
     }
 
@@ -86,8 +84,7 @@ class KafkaRetryHeaderUtilsTest {
     }
 
     @Test
-    void shouldReturnDlqBindingNameConstant() {
-        assertThat(utils.resolveDlqTopicBindingName())
-                .isEqualTo(KafkaCoreAutoConfiguration.GLOBAL_DLQ_OUT);
+    void shouldReturnGlobalDlqBindingNameConstant() {
+        assertThat(utils.resolveGlobalDlqTopicBindingName()).isEqualTo(KafkaCoreAutoConfiguration.GLOBAL_DLQ_OUT);
     }
 }

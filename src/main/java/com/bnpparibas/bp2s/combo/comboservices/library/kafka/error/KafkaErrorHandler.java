@@ -47,7 +47,7 @@ public class KafkaErrorHandler<T extends GenericKafkaMessage> {
      * @param dlqTopicName name of the DLQ topic
      */
     public void handleError(Message<T> message, Exception exception, String dlqTopicName) {
-        int currentAttempt = kafkaRetryHeaderUtils.incrementAndGetRetryAttempt(message);
+        int currentAttempt = kafkaRetryHeaderUtils.getCurrentAttempt(message);
 
         if (currentAttempt < kafkaRetryHeaderUtils.resolveMaxAttemptsFromMessage(message)) {
             throw new KafkaProcessingException("Retrying message, attempt " + currentAttempt, exception);
@@ -58,6 +58,6 @@ public class KafkaErrorHandler<T extends GenericKafkaMessage> {
             throw new KafkaProcessingException("Missing topic name in error message");
         }
 
-        publisher.publish(errorMessage, kafkaRetryHeaderUtils.resolveDlqTopicBindingName());
+        publisher.publish(errorMessage, dlqTopicName);
     }
 }

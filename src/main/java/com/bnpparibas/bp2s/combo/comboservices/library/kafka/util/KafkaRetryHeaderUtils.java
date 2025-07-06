@@ -34,17 +34,6 @@ public class KafkaRetryHeaderUtils {
     }
 
     /**
-     * Increments the delivery attempt header and returns the incremented value.
-     *
-     * @param message message to inspect
-     * @return new attempt number
-     */
-    public int incrementAndGetRetryAttempt(Message<?> message) {
-        int current = getCurrentAttempt(message);
-        return current + 1;
-    }
-
-    /**
      * Retrieves the current attempt count from the message headers.
      *
      * @param message message to inspect
@@ -101,7 +90,7 @@ public class KafkaRetryHeaderUtils {
     /**
      * Returns the binding name used by the library to publish DLQ messages.
      */
-    public String resolveDlqTopicBindingName() {
+    public String resolveGlobalDlqTopicBindingName() {
         return KafkaCoreAutoConfiguration.GLOBAL_DLQ_OUT;
     }
 }

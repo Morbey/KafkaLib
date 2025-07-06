@@ -22,4 +22,3 @@ properties:
   objectMsgId:
     type: integer
     format: int64
-

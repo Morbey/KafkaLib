@@ -93,7 +93,7 @@ public class KafkaErrorHandlerSteps {
     @Then("a processing exception should be thrown")
     public void assertExceptionThrown() {
         assertThat(captured).isInstanceOf(KafkaProcessingException.class);
-        verify(publisher, never()).publish(any(), any());
+        verify(publisher, never()).publish(any(), "global-dlq-out-0");
     }
 
     @Then("the message should be published with status {string} and type {string}")

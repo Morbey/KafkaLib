@@ -13,7 +13,6 @@ This library simplifies retry and DLQ management in Kafka consumers using Spring
   <version>1.0.0</version>
 </dependency>
 ```
-
 2. Implement a `KafkaErrorMapper<T>` to convert failed messages into fallback messages:
 ```java
 public class MyErrorMapper implements KafkaErrorMapper<MyDlqMessage> {
