@@ -11,6 +11,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHead
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
+import org.jetbrains.annotations.NotNull;
 import org.mockito.ArgumentCaptor;
 import org.springframework.cloud.stream.binder.ConsumerProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
@@ -28,6 +29,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@SuppressWarnings("unchecked")
 public class KafkaErrorHandlerSteps {
 
     private KafkaGenericPublisher<GenericKafkaMessage> publisher;
@@ -39,17 +41,7 @@ public class KafkaErrorHandlerSteps {
     public void messageWithRetry(int retry, int maxAttempts) {
         publisher = mock(KafkaGenericPublisher.class);
 
-        BindingServiceProperties props = new BindingServiceProperties();
-        Map<String, BindingProperties> bindings = new HashMap<>();
-        BindingProperties bp = new BindingProperties();
-        bp.setDestination("audit-topic");
-        ConsumerProperties cp = new ConsumerProperties();
-        cp.setMaxAttempts(maxAttempts);
-        bp.setConsumer(cp);
-        bindings.put("audit-in", bp);
-        props.setBindings(bindings);
-
-        KafkaRetryHeaderUtils utils = new KafkaRetryHeaderUtils(props);
+        KafkaRetryHeaderUtils utils = getKafkaRetryHeaderUtils(maxAttempts);
         KafkaErrorMapper<GenericKafkaMessage> mapper = (msg, ex) -> DefaultKafkaDlqMessage.builder()
                 .messageType("audit")
                 .status("exceeded retry")
@@ -72,6 +64,21 @@ public class KafkaErrorHandlerSteps {
                 .setHeader(KafkaHeaderKeys.RETRY_ATTEMPT_HEADER.getKey(), retry)
                 .setHeader("kafka_receivedTopic", "audit-topic")
                 .build();
+    }
+
+    @NotNull
+    private static KafkaRetryHeaderUtils getKafkaRetryHeaderUtils(int maxAttempts) {
+        BindingServiceProperties props = new BindingServiceProperties();
+        Map<String, BindingProperties> bindings = new HashMap<>();
+        BindingProperties bp = new BindingProperties();
+        bp.setDestination("audit-topic");
+        ConsumerProperties cp = new ConsumerProperties();
+        cp.setMaxAttempts(maxAttempts);
+        bp.setConsumer(cp);
+        bindings.put("audit-in", bp);
+        props.setBindings(bindings);
+
+        return new KafkaRetryHeaderUtils(props);
     }
 
     @When("the error handler processes the message")

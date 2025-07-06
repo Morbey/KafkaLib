@@ -1,15 +1,16 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.util;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeaderKeys;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaHeaderUtils;
-import java.util.Collections;
 import org.junit.jupiter.api.Test;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageBuilder;
+
+import java.util.Collections;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class KafkaHeaderUtilsTest {
 

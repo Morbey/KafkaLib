@@ -1,11 +1,5 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.error;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
-
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.core.KafkaGenericPublisher;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorHandler;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorMapper;
@@ -14,10 +8,6 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeader
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaDlqMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
-import java.time.Instant;
-import java.time.ZoneOffset;
-import java.util.HashMap;
-import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -27,11 +17,23 @@ import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
+
 class KafkaErrorHandlerTest {
 
     private KafkaGenericPublisher<GenericKafkaMessage> publisher;
     private KafkaErrorHandler<GenericKafkaMessage> handler;
 
+    @SuppressWarnings("unchecked")
     @BeforeEach
     void setup() {
         publisher = mock(KafkaGenericPublisher.class);
@@ -66,7 +68,8 @@ class KafkaErrorHandlerTest {
                 .setHeader("kafka_receivedTopic", "audit-topic")
                 .build();
 
-        assertThrows(KafkaProcessingException.class, () -> handler.handleError(msg, new RuntimeException("fail"), "audit-topic"));
+        RuntimeException ex = new RuntimeException("fail");
+        assertThrows(KafkaProcessingException.class, () -> handler.handleError(msg, ex, "audit-topic"));
         verify(publisher, never()).publish(any(), any());
     }
 
@@ -98,6 +101,7 @@ class KafkaErrorHandlerTest {
                 .setHeader("kafka_receivedTopic", "audit-topic")
                 .build();
 
-        assertThrows(KafkaProcessingException.class, () -> handler.handleError(msg, new RuntimeException("x"), ""));
+        RuntimeException ex = new RuntimeException("x");
+        assertThrows(KafkaProcessingException.class, () -> handler.handleError(msg, ex, ""));
     }
 }

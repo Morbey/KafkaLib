@@ -1,9 +1,9 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.context;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.context.KafkaErrorMetadataContext;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 class KafkaErrorMetadataContextTest {
 

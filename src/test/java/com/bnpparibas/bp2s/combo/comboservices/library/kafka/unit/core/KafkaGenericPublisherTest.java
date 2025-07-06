@@ -1,11 +1,5 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.unit.core;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.core.KafkaGenericPublisher;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +10,13 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.util.MimeTypeUtils;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
+@SuppressWarnings("unchecked")
 class KafkaGenericPublisherTest {
 
     private StreamBridge streamBridge;
@@ -36,7 +37,7 @@ class KafkaGenericPublisherTest {
         verify(streamBridge).send(eq("binding"), captor.capture());
         Message<GenericKafkaMessage> sent = captor.getValue();
         assertThat(sent.getPayload()).isSameAs(payload);
-        assertThat(sent.getHeaders().get(MessageHeaders.CONTENT_TYPE)).isEqualTo(MimeTypeUtils.APPLICATION_JSON);
+        assertThat(sent.getHeaders()).containsEntry(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
     }
 
     @Test
