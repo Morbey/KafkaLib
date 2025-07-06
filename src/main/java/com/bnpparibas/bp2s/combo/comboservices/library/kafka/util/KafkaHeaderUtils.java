@@ -1,5 +1,6 @@
 package com.bnpparibas.bp2s.combo.comboservices.library.kafka.util;
 
+import com.bnpparibas.bp2s.combo.comboservices.library.kafka.context.KafkaErrorMetadataContext;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeaderKeys;
 import java.util.Optional;
 import org.springframework.messaging.Message;
@@ -26,25 +27,31 @@ public final class KafkaHeaderUtils {
     }
 
     public static void setHeaderAsObject(Message<?> message, String key, Object value) {
-        MessageHeaderAccessor accessor = new MessageHeaderAccessor(message);
+        MessageHeaderAccessor accessor = MessageHeaderAccessor.getMutableAccessor(message);
         accessor.setHeader(key, value);
-        accessor.copyHeaders(accessor.toMessageHeaders());
+        KafkaErrorMetadataContext.put(key, value);
     }
 
     public static Optional<String> getMessageType(Message<?> message) {
-        return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.MESSAGE_TYPE.getKey());
+        return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.MESSAGE_TYPE.getKey())
+                .or(() -> KafkaErrorMetadataContext.get(KafkaHeaderKeys.MESSAGE_TYPE.getKey())
+                        .map(Object::toString));
     }
 
     public static Optional<String> getStatus(Message<?> message) {
-        return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.STATUS.getKey());
+        return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.STATUS.getKey())
+                .or(() -> KafkaErrorMetadataContext.get(KafkaHeaderKeys.STATUS.getKey()).map(Object::toString));
     }
 
     public static Optional<String> getOriginalTopic(Message<?> message) {
-        return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.ORIGINAL_TOPIC.getKey());
+        return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.ORIGINAL_TOPIC.getKey())
+                .or(() -> KafkaErrorMetadataContext.get(KafkaHeaderKeys.ORIGINAL_TOPIC.getKey()).map(Object::toString));
     }
 
     public static Optional<Long> getObjectMsgId(Message<?> message) {
-        return getHeaderAsLong(message.getHeaders(), KafkaHeaderKeys.MESSAGE_ID.getKey());
+        return getHeaderAsLong(message.getHeaders(), KafkaHeaderKeys.MESSAGE_ID.getKey())
+                .or(() -> KafkaErrorMetadataContext.get(KafkaHeaderKeys.MESSAGE_ID.getKey())
+                        .map(val -> Long.parseLong(val.toString())));
     }
 
     public static Optional<String> getHeaderAsString(MessageHeaders headers, String key) {
