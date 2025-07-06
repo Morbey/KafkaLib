@@ -20,6 +20,7 @@ class KafkaHeaderUtilsTest {
                 .build();
         KafkaHeaderUtils.setMessageType(message, "audit");
         KafkaHeaderUtils.setStatus(message, "ok");
+        KafkaHeaderUtils.setOriginalTopic(message, "topic");
 
         assertThat(KafkaHeaderUtils.getMessageType(message)).contains("audit");
         assertThat(KafkaHeaderUtils.getStatus(message)).contains("ok");

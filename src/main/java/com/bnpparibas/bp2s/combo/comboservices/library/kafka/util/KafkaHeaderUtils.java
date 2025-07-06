@@ -14,18 +14,25 @@ public final class KafkaHeaderUtils {
     private KafkaHeaderUtils() {}
 
     public static void setMessageType(Message<?> message, String messageType) {
+        setHeaderAsObject(message, KafkaHeaderKeys.MESSAGE_TYPE.getKey(), messageType);
+    }
+
+    public static void setStatus(Message<?> message, String statusValue) {
+        setHeaderAsObject(message, KafkaHeaderKeys.STATUS.getKey(), statusValue);
+    }
+
+    public static void setOriginalTopic(Message<?> message, String topic) {
+        setHeaderAsObject(message, KafkaHeaderKeys.ORIGINAL_TOPIC.getKey(), topic);
+    }
+
+    public static void setHeaderAsObject(Message<?> message, String key, Object value) {
         MessageHeaderAccessor accessor = new MessageHeaderAccessor(message);
-        accessor.setHeader(KafkaHeaderKeys.MESSAGE_TYPE.getKey(), messageType);
+        accessor.setHeader(key, value);
         accessor.copyHeaders(accessor.toMessageHeaders());
     }
 
     public static Optional<String> getMessageType(Message<?> message) {
         return getHeaderAsString(message.getHeaders(), KafkaHeaderKeys.MESSAGE_TYPE.getKey());
-    }
-
-    public static void setStatus(Message<?> message, String sentToGlobalDlq) {
-        MessageHeaderAccessor accessor = new MessageHeaderAccessor(message);
-        accessor.setHeader(KafkaHeaderKeys.STATUS.getKey(), sentToGlobalDlq);
     }
 
     public static Optional<String> getStatus(Message<?> message) {

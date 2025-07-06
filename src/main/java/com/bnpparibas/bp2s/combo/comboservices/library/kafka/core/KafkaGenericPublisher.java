@@ -28,7 +28,7 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
         streamBridge.send(topicBindingName, dlqMessage);
     }
 
-    public void publish(String topic, T payload) {
+    public void publish(String topic, T payload, MessageHeaders headers) {
         publish(payload, topic); // For now, we ignore headers. This can be extended.
     }
 }

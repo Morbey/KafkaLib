@@ -182,8 +182,8 @@
                         </goals>
                         <configuration>
                             <sources>
-                                <source>src/test/unit/java</source>
-                                <source>src/test/integration/java</source>
+                                <source>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/unit</source>
+                                <source>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/integration</source>
                             </sources>
                         </configuration>
                     </execution>
@@ -196,7 +196,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <testSourceDirectory>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/integration/java</testSourceDirectory>
+                    <testSourceDirectory>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/unit</testSourceDirectory>
                     <includes>
                         <include>**/*Test.java</include>
                         <include>**/*Tests.java</include>
@@ -210,7 +210,7 @@
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-surefire-plugin.version}</version>
                 <configuration>
-                    <testSourceDirectory>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/integration/java</testSourceDirectory>
+                    <testSourceDirectory>src/test/java/com/bnpparibas/bp2s/combo/comboservices/library/kafka/integration</testSourceDirectory>
                     <argLine>-Djdk.net.URLClassPath.disableClassPathURLCheck=true</argLine>
                     <includes>
                         <include>**/*IT.java</include>

@@ -42,7 +42,7 @@ class KafkaGenericPublisherTest {
     @Test
     void publishUsingTopicDelegates() {
         GenericKafkaMessage payload = GenericKafkaMessage.builder().build();
-        publisher.publish("topic", payload);
+        publisher.publish("topic", payload, null);
         verify(streamBridge).send(eq("topic"), any(Message.class));
     }
 }

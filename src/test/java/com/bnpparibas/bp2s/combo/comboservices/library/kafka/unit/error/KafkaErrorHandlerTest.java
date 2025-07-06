@@ -15,14 +15,15 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaD
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
 import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.cloud.stream.binder.ConsumerProperties;
 import org.springframework.cloud.stream.config.BindingProperties;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
-import org.springframework.cloud.stream.config.ConsumerProperties;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
@@ -47,12 +48,12 @@ class KafkaErrorHandlerTest {
         KafkaErrorMapper<GenericKafkaMessage> mapper = (msg, ex) -> DefaultKafkaDlqMessage.builder()
                 .messageType("audit")
                 .status("exceeded retry")
-                .originalMessage(msg.getPayload().getOriginalMessage())
-                .topicName(msg.getPayload().getTopicName())
-                .payload(msg.getPayload().getPayload())
+                .message(((GenericKafkaMessage) msg.getPayload()).getMessage())
+                .topicName(((GenericKafkaMessage) msg.getPayload()).getTopicName())
+                .payload(msg.getPayload())
                 .headers(msg.getHeaders())
                 .errorMsg(ex.getMessage())
-                .createdAt(Instant.now())
+                .createdAt(Instant.now().atOffset(ZoneOffset.UTC))
                 .build();
         handler = new KafkaErrorHandler<>(publisher, mapper, utils);
     }
@@ -72,7 +73,7 @@ class KafkaErrorHandlerTest {
     @Test
     void shouldPublishWhenAttemptsExceeded() {
         GenericKafkaMessage payload = GenericKafkaMessage.builder()
-                .originalMessage("o")
+                .message("o")
                 .topicName("audit-topic")
                 .payload("p")
                 .build();
