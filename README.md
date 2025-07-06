@@ -37,7 +37,7 @@ public KafkaErrorHandler<MyDlqMessage> errorHandler(
 
 ### Additional Configuration
 
-Disable the binder's built-in DLQ so this library can manage retries:
+Disable the binder's built-in DLQ so this library can manage the publishing on dlq topics on your behalf:
 
 ```yaml
 spring:
@@ -48,17 +48,6 @@ spring:
           <your-consumer>:
             consumer:
               enable-dlq: false
-```
-
-## ❗ What NOT to Configure in application.yaml
-
-Avoid the following `spring.cloud.stream` Kafka configurations to prevent conflicts with this library's retry and DLQ mechanisms:
-
-```yaml
-spring.cloud.stream.bindings.*.consumer.maxAttempts
-spring.cloud.stream.bindings.*.consumer.backOffInitialInterval
-spring.cloud.stream.bindings.*.consumer.backOffMaxInterval
-spring.cloud.stream.kafka.binder.*
 ```
 
 ## ✅ Why Use This Library?

@@ -23,10 +23,7 @@ To start using this library in your project:
 </dependency>
 ----
 
-2. Create a `KafkaErrorHandler<T>` bean in your application, providing:
-   - A `KafkaGenericPublisher<T>` bean;
-   - A `KafkaConsumerErrorProperties` bean (or use default configuration);
-   - A custom implementation of `KafkaErrorMapper<T>` to map failed messages to DLQ format.
+2. Create a custom implementation of `KafkaErrorMapper<T>` to map failed messages to DLQ format.
 
 == Custom Error Mapping
 
