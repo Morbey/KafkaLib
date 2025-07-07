@@ -44,3 +44,6 @@ Mapper -> Ctx : get(key)
 @enduml
 ----
 
+It is crucial to clear the context once processing finishes to avoid leaking
+metadata between threads:
+`KafkaErrorMetadataContext.clear()`.

@@ -5,6 +5,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.exception.KafkaProc
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
 import io.micrometer.common.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.messaging.Message;
  *
  * @param <T> type of message handled by the publisher
  */
+@Slf4j
 public class KafkaErrorHandler<T extends GenericKafkaMessage> {
 
     /** Publisher used to send messages to the DLQ. */
@@ -40,24 +42,30 @@ public class KafkaErrorHandler<T extends GenericKafkaMessage> {
      * Processes a failed message. If the retry attempts have not been
      * exhausted, a {@link KafkaProcessingException} is thrown to trigger a
      * retry. Otherwise, the message is converted using the mapper and published
-     * to the configured DLQ.
+     * to the input topic.
      *
      * @param message     the original message
      * @param exception   the exception thrown by the consumer
-     * @param dlqTopicName name of the DLQ topic
+     * @param dlqTopic name of the DLQ topic
      */
-    public void handleError(Message<T> message, Exception exception, String dlqTopicName) {
+    public void handleError(Message<T> message, Exception exception, String dlqTopic) {
         int currentAttempt = kafkaRetryHeaderUtils.getCurrentAttempt(message);
+        int maxAttempts = kafkaRetryHeaderUtils.resolveMaxAttemptsFromMessage(message);
+        log.debug("Handling error, attempt {}/{}", currentAttempt, maxAttempts);
 
-        if (currentAttempt < kafkaRetryHeaderUtils.resolveMaxAttemptsFromMessage(message)) {
+        if (currentAttempt < maxAttempts) {
+            log.debug("Retrying message");
             throw new KafkaProcessingException("Retrying message, attempt " + currentAttempt, exception);
         }
 
+        log.warn("Attempts exhausted, publishing to DLQ topic {}", dlqTopic);
         T errorMessage = mapper.buildErrorMessage(message, exception);
-        if (StringUtils.isBlank(dlqTopicName)) {
-            throw new KafkaProcessingException("Missing topic name in error message");
+        if (StringUtils.isBlank(dlqTopic)) {
+            log.error("Missing DLQ topic name in error message");
+            throw new KafkaProcessingException("Missing DLQ topic name in error message");
         }
 
-        publisher.publish(errorMessage, dlqTopicName);
+        publisher.publish(dlqTopic, errorMessage);
+        log.debug("Published message to DLQ topic {}", dlqTopic);
     }
 }

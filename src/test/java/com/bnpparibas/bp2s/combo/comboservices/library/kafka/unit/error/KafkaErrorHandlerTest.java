@@ -69,7 +69,7 @@ class KafkaErrorHandlerTest {
                 .build();
 
         RuntimeException ex = new RuntimeException("fail");
-        assertThrows(KafkaProcessingException.class, () -> handler.handleError(msg, ex, "audit-topic"));
+        assertThrows(KafkaProcessingException.class, () -> handler.handleError(msg, ex, "global-dlq-out-0"));
         verify(publisher, never()).publish(any(), any());
     }
 
@@ -85,9 +85,9 @@ class KafkaErrorHandlerTest {
                 .setHeader("kafka_receivedTopic", "audit-topic")
                 .build();
 
-        handler.handleError(msg, new RuntimeException("boom"), "audit-topic");
+        handler.handleError(msg, new RuntimeException("boom"), "global-dlq-out-0");
         ArgumentCaptor<GenericKafkaMessage> captor = ArgumentCaptor.forClass(GenericKafkaMessage.class);
-        verify(publisher).publish(captor.capture(), eq("global-dlq-out-0"));
+        verify(publisher).publish(eq("global-dlq-out-0"), captor.capture());
         GenericKafkaMessage sent = captor.getValue();
         assertThat(sent.getStatus()).isEqualTo("exceeded retry");
         assertThat(sent.getMessageType()).isEqualTo("audit");

@@ -32,30 +32,26 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
     }
 
     /**
-     * Publishes the given payload to the specified binding name.
-     * Headers are automatically set with JSON content type.
+     * Publishes using a raw topic name and optional headers. This method allows
+     * forwarding a message to a specific Kafka topic. <br>
      *
-     * @param payload           message to send
      * @param topicBindingName  output binding configured in Spring Cloud Stream
+     * @param payload payload to send
      */
-    public void publish(T payload, String topicBindingName) {
-        Message<T> dlqMessage = MessageBuilder
-                .withPayload(payload)
-                .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
-                .build();
-
-        streamBridge.send(topicBindingName, dlqMessage);
+    public void publish(String topicBindingName, T payload) {
+        publish(topicBindingName, payload, null);
     }
 
     /**
      * Publishes using a raw topic name and optional headers. This method allows
-     * forwarding a message to a specific Kafka topic.
+     * forwarding a message to a specific Kafka topic.<br>
      *
-     * @param topic   the Kafka topic
+     * @param topicBindingName  output binding configured in Spring Cloud Stream
      * @param payload payload to send
      * @param headers additional headers to attach; may be {@code null}
      */
-    public void publish(String topic, T payload, MessageHeaders headers) {
+    public void publish(String topicBindingName, T payload, MessageHeaders headers) {
+        log.debug("Publishing directly to topic {}", topicBindingName);
         MessageBuilder<T> builder = MessageBuilder
                 .withPayload(payload)
                 .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
@@ -65,6 +61,6 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
         }
 
         Message<T> message = builder.build();
-        streamBridge.send(topic, message);
+        streamBridge.send(topicBindingName, message);
     }
 }

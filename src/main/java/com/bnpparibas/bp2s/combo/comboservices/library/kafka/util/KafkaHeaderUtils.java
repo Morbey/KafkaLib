@@ -3,6 +3,8 @@ package com.bnpparibas.bp2s.combo.comboservices.library.kafka.util;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.context.KafkaErrorMetadataContext;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeaderKeys;
 import java.util.Optional;
+
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageHeaderAccessor;
@@ -10,6 +12,7 @@ import org.springframework.messaging.support.MessageHeaderAccessor;
 /**
  * Utility class for reading headers safely from Kafka messages.
  */
+@Slf4j
 public final class KafkaHeaderUtils {
 
     private KafkaHeaderUtils() {}
@@ -56,6 +59,7 @@ public final class KafkaHeaderUtils {
         MessageHeaderAccessor accessor = MessageHeaderAccessor.getMutableAccessor(message);
         accessor.setHeader(key, value);
         KafkaErrorMetadataContext.put(key, value);
+        log.debug("Set header {}={}", key, value);
     }
 
     /**

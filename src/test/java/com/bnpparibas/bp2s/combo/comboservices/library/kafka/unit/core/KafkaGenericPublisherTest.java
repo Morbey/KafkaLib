@@ -31,7 +31,7 @@ class KafkaGenericPublisherTest {
     @Test
     void publishShouldSendMessage() {
         GenericKafkaMessage payload = GenericKafkaMessage.builder().build();
-        publisher.publish(payload, "binding");
+        publisher.publish("binding", payload);
 
         ArgumentCaptor<Message<GenericKafkaMessage>> captor = ArgumentCaptor.forClass(Message.class);
         verify(streamBridge).send(eq("binding"), captor.capture());

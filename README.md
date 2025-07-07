@@ -57,3 +57,9 @@ spring:
 - Prepares your app for future Kafka extensions
 - Stores custom metadata in a thread local context accessible during error mapping
 
+### Clearing the Metadata Context
+
+Always invoke `KafkaErrorMetadataContext.clear()` once a message has been fully
+processed. This prevents metadata from leaking between threads and ensures that
+subsequent messages start with a clean context. A typical pattern is to place
+the call inside a `finally` block of your consumer logic.

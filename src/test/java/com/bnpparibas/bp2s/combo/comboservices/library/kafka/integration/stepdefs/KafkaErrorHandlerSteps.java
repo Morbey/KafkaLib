@@ -84,7 +84,7 @@ public class KafkaErrorHandlerSteps {
     @When("the error handler processes the message")
     public void processMessage() {
         try {
-            handler.handleError(message, new RuntimeException("fail"), "audit-topic");
+            handler.handleError(message, new RuntimeException("fail"), "global-dlq-out-0");
         } catch (Exception ex) {
             captured = ex;
         }
@@ -93,13 +93,13 @@ public class KafkaErrorHandlerSteps {
     @Then("a processing exception should be thrown")
     public void assertExceptionThrown() {
         assertThat(captured).isInstanceOf(KafkaProcessingException.class);
-        verify(publisher, never()).publish(any(), "global-dlq-out-0");
+        verify(publisher, never()).publish(eq("global-dlq-out-0"), any());
     }
 
     @Then("the message should be published with status {string} and type {string}")
     public void verifyPublished(String status, String type) {
         ArgumentCaptor<GenericKafkaMessage> captor = ArgumentCaptor.forClass(GenericKafkaMessage.class);
-        verify(publisher).publish(captor.capture(), eq("global-dlq-out-0"));
+        verify(publisher).publish(eq("global-dlq-out-0"), captor.capture());
         GenericKafkaMessage sent = captor.getValue();
         assertThat(sent.getStatus()).isEqualTo(status);
         assertThat(sent.getMessageType()).isEqualTo(type);

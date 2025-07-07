@@ -8,6 +8,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.headers.KafkaHeader
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaDlqMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.cloud.stream.config.BindingServiceProperties;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -16,7 +17,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.time.OffsetDateTime;
 
-//@formatter:off
 /**
  * Spring Boot autoconfiguration that registers the core Kafka beans used by
  * this library. It exposes a {@link KafkaGenericPublisher} for publishing
@@ -24,8 +24,10 @@ import java.time.OffsetDateTime;
  * {@link DefaultKafkaDlqMessage}, and a {@link KafkaErrorHandler} preconfigured
  * with {@link KafkaRetryHeaderUtils}.
  */
+//@ formatter: off
 @Configuration
 @ConditionalOnMissingBean(BindingServiceProperties.class)
+@Slf4j
 public class KafkaCoreAutoConfiguration {
 
     /**
@@ -42,6 +44,7 @@ public class KafkaCoreAutoConfiguration {
      */
     @Bean
     public KafkaGenericPublisher<GenericKafkaMessage> kafkaGenericPublisher(StreamBridge streamBridge) {
+        log.debug("Creating KafkaGenericPublisher bean");
         return new KafkaGenericPublisher<>(streamBridge);
     }
 
@@ -54,6 +57,7 @@ public class KafkaCoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public KafkaErrorMapper<GenericKafkaMessage> defaultKafkaErrorMapper() {
+        log.debug("Registering default KafkaErrorMapper bean");
         return (message, exception) -> DefaultKafkaDlqMessage.builder()
                 .message(message.getPayload().toString())
                 .headers(message.getHeaders())
@@ -72,14 +76,15 @@ public class KafkaCoreAutoConfiguration {
      * failures. The handler delegates to the given mapper and publisher and
      * applies retry logic based on the provided binding properties.
      *
-     * @param publisher the publisher used to send DLQ messages
-     * @param errorMapper mapper converting failed messages
+     * @param publisher                the publisher used to send DLQ messages
+     * @param errorMapper              mapper converting failed messages
      * @param bindingServiceProperties Spring Cloud binding properties
      * @return a fully configured error handler
      */
     @Bean
     @ConditionalOnMissingBean
     public KafkaErrorHandler<GenericKafkaMessage> kafkaErrorHandler(KafkaGenericPublisher<GenericKafkaMessage> publisher, KafkaErrorMapper<GenericKafkaMessage> errorMapper, BindingServiceProperties bindingServiceProperties) {
+        log.debug("Configuring KafkaErrorHandler bean");
         KafkaRetryHeaderUtils retryHeaderUtils = new KafkaRetryHeaderUtils(bindingServiceProperties);
         return new KafkaErrorHandler<>(publisher, errorMapper, retryHeaderUtils);
     }
