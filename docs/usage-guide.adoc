@@ -58,3 +58,9 @@ public KafkaErrorHandler<MyDlqMessage> errorHandler(
 
 Values placed in `KafkaErrorMetadataContext` via `KafkaHeaderUtils.setHeaderAsObject(...)` are available when building the error message.
 
+[WARNING]
+====
+Remember to call `KafkaErrorMetadataContext.clear()` after processing each
+message. Failing to do so might leak metadata across threads.
+====
+

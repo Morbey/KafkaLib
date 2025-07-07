@@ -5,6 +5,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.exception.KafkaProc
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
 import io.micrometer.common.util.StringUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;
 
 /**
@@ -14,6 +15,7 @@ import org.springframework.messaging.Message;
  *
  * @param <T> type of message handled by the publisher
  */
+@Slf4j
 public class KafkaErrorHandler<T extends GenericKafkaMessage> {
 
     /** Publisher used to send messages to the DLQ. */
@@ -48,16 +50,22 @@ public class KafkaErrorHandler<T extends GenericKafkaMessage> {
      */
     public void handleError(Message<T> message, Exception exception, String dlqTopicName) {
         int currentAttempt = kafkaRetryHeaderUtils.incrementAndGetRetryAttempt(message);
+        int maxAttempts = kafkaRetryHeaderUtils.resolveMaxAttemptsFromMessage(message);
+        log.debug("Handling error, attempt {}/{}", currentAttempt, maxAttempts);
 
-        if (currentAttempt < kafkaRetryHeaderUtils.resolveMaxAttemptsFromMessage(message)) {
+        if (currentAttempt < maxAttempts) {
+            log.debug("Retrying message");
             throw new KafkaProcessingException("Retrying message, attempt " + currentAttempt, exception);
         }
 
+        log.warn("Attempts exhausted, publishing to DLQ");
         T errorMessage = mapper.buildErrorMessage(message, exception);
         if (StringUtils.isBlank(dlqTopicName)) {
+            log.error("Missing topic name in error message");
             throw new KafkaProcessingException("Missing topic name in error message");
         }
 
         publisher.publish(errorMessage, kafkaRetryHeaderUtils.resolveDlqTopicBindingName());
+        log.debug("Published message to DLQ binding {}", kafkaRetryHeaderUtils.resolveDlqTopicBindingName());
     }
 }

@@ -40,12 +40,14 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
      * @param topicBindingName  output binding configured in Spring Cloud Stream
      */
     public void publish(T payload, String topicBindingName) {
+        log.debug("Publishing to binding {}", topicBindingName);
         Message<T> dlqMessage = MessageBuilder
                 .withPayload(payload)
                 .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON)
                 .build();
 
         streamBridge.send(topicBindingName, dlqMessage);
+        log.debug("Message published to {}", topicBindingName);
     }
 
     /**
@@ -57,6 +59,7 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
      * @param headers additional headers to attach; may be {@code null}
      */
     public void publish(String topic, T payload, MessageHeaders headers) {
+        log.debug("Publishing directly to topic {}", topic);
         MessageBuilder<T> builder = MessageBuilder
                 .withPayload(payload)
                 .setHeader(MessageHeaders.CONTENT_TYPE, MimeTypeUtils.APPLICATION_JSON);
@@ -67,5 +70,6 @@ public class KafkaGenericPublisher<T extends GenericKafkaMessage> {
 
         Message<T> message = builder.build();
         streamBridge.send(topic, message);
+        log.debug("Message published to {}", topic);
     }
 }

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility storing metadata related to a Kafka message in a thread-local map.
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
  * when building the DLQ message.
  */
 @NoArgsConstructor
+@Slf4j
 public class KafkaErrorMetadataContext {
 
     private static final ThreadLocal<Map<String, Object>> CONTEXT = ThreadLocal.withInitial(HashMap::new);
@@ -24,6 +26,7 @@ public class KafkaErrorMetadataContext {
      */
     public static void put(String key, Object value) {
         CONTEXT.get().put(key, value);
+        log.debug("Context put {}={}", key, value);
     }
 
     /**
@@ -41,6 +44,7 @@ public class KafkaErrorMetadataContext {
      */
     public static void clear() {
         CONTEXT.remove();
+        log.debug("Context cleared");
     }
 
     /**

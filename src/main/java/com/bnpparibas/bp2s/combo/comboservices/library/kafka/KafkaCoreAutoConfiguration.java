@@ -8,6 +8,7 @@ import com.bnpparibas.bp2s.combo.comboservices.library.kafka.error.KafkaErrorMap
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.DefaultKafkaDlqMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.model.GenericKafkaMessage;
 import com.bnpparibas.bp2s.combo.comboservices.library.kafka.util.KafkaRetryHeaderUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.OffsetDateTime;
 
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConditionalOnMissingBean(BindingServiceProperties.class)
+@Slf4j
 public class KafkaCoreAutoConfiguration {
 
     /**
@@ -43,6 +45,7 @@ public class KafkaCoreAutoConfiguration {
      */
     @Bean
     public KafkaGenericPublisher<GenericKafkaMessage> kafkaGenericPublisher(StreamBridge streamBridge) {
+        log.debug("Creating KafkaGenericPublisher bean");
         return new KafkaGenericPublisher<>(streamBridge);
     }
 
@@ -55,6 +58,7 @@ public class KafkaCoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public KafkaErrorMapper<GenericKafkaMessage> defaultKafkaErrorMapper() {
+        log.debug("Registering default KafkaErrorMapper bean");
         return (message, exception) -> DefaultKafkaDlqMessage.builder()
                 .message(message.getPayload().toString())
                 .headers(message.getHeaders())
@@ -81,6 +85,7 @@ public class KafkaCoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean
     public KafkaErrorHandler<GenericKafkaMessage> kafkaErrorHandler(KafkaGenericPublisher<GenericKafkaMessage> publisher, KafkaErrorMapper<GenericKafkaMessage> errorMapper, BindingServiceProperties bindingServiceProperties) {
+        log.debug("Configuring KafkaErrorHandler bean");
         KafkaRetryHeaderUtils retryHeaderUtils = new KafkaRetryHeaderUtils(bindingServiceProperties);
         return new KafkaErrorHandler<>(publisher, errorMapper, retryHeaderUtils);
     }

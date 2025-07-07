@@ -6,10 +6,12 @@ import java.util.Optional;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageHeaders;
 import org.springframework.messaging.support.MessageHeaderAccessor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Utility class for reading headers safely from Kafka messages.
  */
+@Slf4j
 public final class KafkaHeaderUtils {
 
     private KafkaHeaderUtils() {}
@@ -56,6 +58,7 @@ public final class KafkaHeaderUtils {
         MessageHeaderAccessor accessor = MessageHeaderAccessor.getMutableAccessor(message);
         accessor.setHeader(key, value);
         KafkaErrorMetadataContext.put(key, value);
+        log.debug("Set header {}={}", key, value);
     }
 
     /**
